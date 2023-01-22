@@ -1,7 +1,32 @@
-import React, { useState, useContext } from 'react';
-import { Table } from 'antd';
+import React, { useState , useEffect} from 'react';
+import { Table, Checkbox } from 'antd';
+import api from 'axios';
+import axios from 'axios';
 
 function PlacesTable() {
+
+    const onChangeCheckbox = (e) => {
+        console.log(`checked = ${e.target.checked}`);
+      };
+
+    const [dataSource, setDataSource] = useState(null);
+
+    const message = async () => {
+        try{
+            let res = await axios.get('http://127.0.0.1:8000/');
+            let result = res.data;
+            setDataSource(result)
+        } catch(e)
+        {
+            console.log(e)
+        }
+    }
+
+    useEffect(() => {
+        message()
+    },[])
+
+    console.log(dataSource)
 
     const columns = [
         {
@@ -28,27 +53,13 @@ function PlacesTable() {
           title: 'Visited',
           dataIndex: 'visited',
           key: 'visited',
+          render: (visited) => (
+            visited === "Si" ? <Checkbox checked={true}> </Checkbox> : <Checkbox checked={false}> </Checkbox>
+          )
+        //   render: () => {<Checkbox onChange={onChangeCheckbox}>Checkbox</Checkbox>}
         },
     ];
 
-    const dataSource = [
-        {
-          key: '1',
-          name: 'Honesto Mike',
-          address: 'Calle del restaurante 1234',
-          foodType: 'burgers',
-          rating: '5',
-          visited: 'Si'
-        },
-        {
-          key: '2',
-          name: 'Subway',
-          address: 'Av. La Plaza 4321',
-          foodType: 'Sandwiches',
-          rating: '4.5',
-          visited: 'No'
-        },
-    ];
 
 
     return (
@@ -57,6 +68,8 @@ function PlacesTable() {
                 dataSource={dataSource}
                 columns={columns}
             />
+            
+            
 
         </div>
     );

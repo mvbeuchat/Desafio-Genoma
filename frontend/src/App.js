@@ -8,6 +8,7 @@ function App() {
         <p>
           @MejorConTocino
           <PlacesTable/>
+          
         </p>
       
       </header>
