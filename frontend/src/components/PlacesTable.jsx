@@ -7,23 +7,35 @@ import { ExclamationCircleFilled } from '@ant-design/icons';
 import form from './form'
 
 function PlacesTable() {
-    const [isPlaceFormOpen, setIsPlaceFormOpen] = useState(false);
+    const [isNewPlaceFormOpen, setIsNewPlaceFormOpen] = useState(false);
+    const [isUpdatePlaceFormOpen, setIsUpdatePlaceFormOpen] = useState(false);
+    const [updatingId, setUpdatingId] = useState()
     const { register, handleSubmit } = useForm();
 
-    const showPlaceForm = () => {
-        setIsPlaceFormOpen(true);
+    const showNewPlaceForm = () => {
+        setIsNewPlaceFormOpen(true);
     };
-    const placeFormOpenOk = () => {
-        setIsPlaceFormOpen(false);
+    const newPlaceFormOpenOk = () => {
+        setIsNewPlaceFormOpen(false);
     };
-    const placeFormOpenCancel = () => {
-        setIsPlaceFormOpen(false);
+    const newPlaceFormOpenCancel = () => {
+        setIsNewPlaceFormOpen(false);
+    };
+    const showUpdatePlaceForm = (id) => {
+        setUpdatingId(id)
+        setIsUpdatePlaceFormOpen(true);
+    };
+    const updatePlaceFormOpenOk = () => {
+        setIsUpdatePlaceFormOpen(false);
+    };
+    const updatePlaceFormOpenCancel = () => {
+        setIsUpdatePlaceFormOpen(false);
     };
 
     const deletePlace = async (id) => {
         try{
             let res = await axios.delete(api + 'deletePlace/' + id);
-            const refresh = () => window.location.reload(true)
+            window.location.reload(true)
         } catch(e)
         {
             console.log(e)
@@ -54,7 +66,19 @@ function PlacesTable() {
         console.log(data)
         try{
             let res = await axios.post(api + 'newPlace/', data);
-            const refresh = () => window.location.reload(true)
+            window.location.reload(true)
+        } catch(e)
+        {
+            console.log(e)
+        }
+    }
+
+    const updatePlace = async (data) => {
+        data["id"] = updatingId
+        console.log(data)
+        try{
+            let res = await axios.put(api + 'updatePlace/' + updatingId, data);
+            window.location.reload(true)
         } catch(e)
         {
             console.log(e)
@@ -109,7 +133,7 @@ function PlacesTable() {
           dataIndex: 'visited',
           key: 'visited',
           render: (visited) => (
-            visited === "Si" ? <Checkbox checked={true}> </Checkbox> : <Checkbox checked={false}> </Checkbox>
+            visited ? <Checkbox checked={true}> </Checkbox> : <Checkbox checked={false}> </Checkbox>
           )
         },
         {
@@ -120,7 +144,7 @@ function PlacesTable() {
             <>
                 
                 <Space direction="horizontal">
-                <Button type="primary" onClick={() => {showPlaceForm()}}>Edit</Button>
+                <Button type="primary" onClick={() => {showUpdatePlaceForm(record.id)}}>Edit</Button>
                 <Button type="primary" danger onClick={() => showDeleteConfirmation(record.id)}>Delete</Button>
                 </Space>
                 
@@ -138,9 +162,9 @@ function PlacesTable() {
                 pagination={false}
             />
 
-            <Button type="primary" ghost onClick={showPlaceForm}>Add place to eat</Button>
+            <Button type="primary" ghost onClick={showNewPlaceForm}>Add place to eat</Button>
             
-            <Modal title="Ingrese los datos" open={isPlaceFormOpen} onOk={placeFormOpenOk} onCancel={placeFormOpenCancel}>
+            <Modal title="Ingrese los datos para el nuevo lugar" open={isNewPlaceFormOpen} onOk={newPlaceFormOpenOk} onCancel={newPlaceFormOpenCancel}>
             <form onSubmit={handleSubmit(newPlace)}>
                 <label>
                     Name: 
@@ -178,6 +202,45 @@ function PlacesTable() {
             
             </Modal>
             
+
+
+            <Modal title="Ingrese los datos nuevamente" open={isUpdatePlaceFormOpen} onOk={updatePlaceFormOpenOk} onCancel={updatePlaceFormOpenCancel}>
+            <form onSubmit={handleSubmit(updatePlace)}>
+                <label>
+                    Name: 
+                    <input type="text" {...register('name')} />
+                </label>
+                <br/>
+                <label>
+                    Address: 
+                    <input type="text" {...register('address')}/>
+                </label>
+                <br/>
+                <label>
+                    Food Type: 
+                    <input type="text" {...register('foodType')}/>
+                </label>
+                <br/>
+                <label>
+                    Rating: 
+                    <select {...register('rating')}>
+                        <option value="1">1</option>
+                        <option value="2">2</option>
+                        <option value="3">3</option>
+                        <option value="4">4</option>
+                        <option value="5">5</option>
+                    </select>
+                </label>
+                <br/>
+                <label>
+                    Visited: 
+                    <input type="checkbox" {...register('visited')}/>
+                </label>
+                <br/>
+                <input type="submit" value="Submit"/>
+            </form>
+            
+            </Modal>
 
             
 

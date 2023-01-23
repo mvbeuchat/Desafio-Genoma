@@ -55,7 +55,7 @@ def newPlace(place: Place, db: Session = Depends(get_db)):
     place_model.name = place.name
     place_model.address = place.address
     place_model.foodType = place.foodType
-    place_model.rating = int(place.rating)
+    place_model.rating = place.rating
     place_model.visited = place.visited
     db.add(place_model)
     db.commit()
