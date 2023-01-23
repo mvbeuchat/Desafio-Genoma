@@ -149,6 +149,34 @@ function PlacesTable() {
           title: 'Food type',
           dataIndex: 'foodType',
           key: 'foodType',
+          filters: [
+            {
+                text: 'Americana',
+                value: 'Americana'
+            },
+            {
+                text: 'China',
+                value: 'China'
+            },
+            {
+                text: 'Italiana',
+                value: 'Italiana'
+            },
+            {
+                text: 'Japonesa',
+                value: 'Japonesa'
+            },
+            {
+                text: 'Pasteleria',
+                value: 'Pasteleria'
+            },
+            {
+                text: 'Otro',
+                value: 'Otro'
+            }
+
+          ],
+          onFilter: (value, record) => record.foodType === value,
         },
         {
           title: 'Rating',
@@ -163,11 +191,11 @@ function PlacesTable() {
           sorter: (a, b) => a.visited - b.visited,
           filters: [
             {
-                text: 'true',
+                text: 'Sí',
                 value: true
             },
             {
-                text: 'false',
+                text: 'No',
                 value: false
             }
           ],
@@ -221,7 +249,14 @@ function PlacesTable() {
                 <br/>
                 <label>
                     Food Type: 
-                    <input type="text" {...register('foodType')}/>
+                    <select {...register('foodType')}>
+                        <option value="Americana">Americana</option>
+                        <option value="China">China</option>
+                        <option value="Italiana">Italiana</option>
+                        <option value="Japonesa">Japonesa</option>
+                        <option value="Pasteleria">Pasteleria</option>
+                        <option value="Otro">Otro</option>
+                    </select>
                 </label>
                 <br/>
                 <label>
