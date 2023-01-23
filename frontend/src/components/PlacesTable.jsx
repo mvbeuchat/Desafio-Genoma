@@ -171,6 +171,7 @@ function PlacesTable() {
                 value: false
             }
           ],
+          onFilter: (value, record) => record.visited === value,
           render: (visited) => (
             visited ? <Checkbox checked={true}> </Checkbox> : <Checkbox checked={false}> </Checkbox>
           )
