@@ -33,10 +33,13 @@ Para ejecutar la aplicación se deben correr por separado el backend y el fronte
 >
 >>`deactivate`
 >
->
+>Además, se pueden ver y utilizar todos los *endpoint* disponibles accediendo a 
+>>http://localhost:8000/docs
 
 
 >Para ejecutar el frontend, hay que estar dentro de la carpeta frontend y ejecutar.
+>
+>>`npm install`
 >
 >>`npm run start`
 >
