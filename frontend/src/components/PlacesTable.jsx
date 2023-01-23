@@ -11,6 +11,7 @@ function PlacesTable() {
     const [isUpdatePlaceFormOpen, setIsUpdatePlaceFormOpen] = useState(false);
     const [updatingId, setUpdatingId] = useState()
     const { register, handleSubmit } = useForm();
+    const [dataSource, setDataSource] = useState(null);
 
     const showNewPlaceForm = () => {
         setIsNewPlaceFormOpen(true);
@@ -32,15 +33,7 @@ function PlacesTable() {
         setIsUpdatePlaceFormOpen(false);
     };
 
-    const deletePlace = async (id) => {
-        try{
-            let res = await axios.delete(api + 'deletePlace/' + id);
-            window.location.reload(true)
-        } catch(e)
-        {
-            console.log(e)
-        }
-    };
+    
     
     const { confirm } = Modal
     const showDeleteConfirmation = (id) => {
@@ -59,6 +52,16 @@ function PlacesTable() {
             console.log('Cancel');
           },
         });
+    };
+
+    const deletePlace = async (id) => {
+        try{
+            let res = await axios.delete(api + 'deletePlace/' + id);
+            window.location.reload(true)
+        } catch(e)
+        {
+            console.log(e)
+        }
     };
 
     
@@ -85,9 +88,7 @@ function PlacesTable() {
         }
     }
 
-    const [dataSource, setDataSource] = useState(null);
-
-    const message = async () => {
+    const loadPlaces = async () => {
         try{
             let res = await axios.get(api);
             let result = res.data;
@@ -99,14 +100,40 @@ function PlacesTable() {
     }
 
     useEffect(() => {
-        message()
+        loadPlaces()
     },[])
+
+    const load5StarPlaces = async () => {
+        try{
+            let res = await axios.get(api + '5StarPlaces/');
+            let result = res.data;
+            setDataSource(result);
+            console.log(result);
+        } catch(e)
+        {
+            console.log(e)
+        }
+    }
+
+    const loadAllPlaces = async () => {
+        try{
+            let res = await axios.get(api);
+            let result = res.data;
+            setDataSource(result)
+            console.log(result);
+        } catch(e)
+        {
+            console.log(e)
+        }
+    }
+
 
     const columns = [
         {
             title: 'Id',
             dataIndex: 'id',
             key: 'id',
+            
         },
         {
           title: 'Name',
@@ -127,14 +154,27 @@ function PlacesTable() {
           title: 'Rating',
           dataIndex: 'rating',
           key: 'rating',
+          sorter: (a, b) => a.rating - b.rating,
         },
         {
           title: 'Visited',
           dataIndex: 'visited',
           key: 'visited',
+          sorter: (a, b) => a.visited - b.visited,
+          filters: [
+            {
+                text: 'true',
+                value: true
+            },
+            {
+                text: 'false',
+                value: false
+            }
+          ],
           render: (visited) => (
             visited ? <Checkbox checked={true}> </Checkbox> : <Checkbox checked={false}> </Checkbox>
           )
+          
         },
         {
           title: 'Action',
@@ -163,6 +203,8 @@ function PlacesTable() {
             />
 
             <Button type="primary" ghost onClick={showNewPlaceForm}>Add place to eat</Button>
+            <Button type="primary" ghost onClick={loadAllPlaces}>Show all</Button>
+            <Button type="primary" ghost onClick={load5StarPlaces}>Show only 5 star</Button>
             
             <Modal title="Ingrese los datos para el nuevo lugar" open={isNewPlaceFormOpen} onOk={newPlaceFormOpenOk} onCancel={newPlaceFormOpenCancel}>
             <form onSubmit={handleSubmit(newPlace)}>

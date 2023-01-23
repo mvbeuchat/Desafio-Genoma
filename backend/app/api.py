@@ -40,9 +40,6 @@ class Place(BaseModel):
     rating: int = Field(gt=-1, lt=6)
     visited: bool
 
-PLACES = []
-
-
 @app.get("/", tags=["root"])
 async def read_api(db: Session = Depends(get_db)):
     # return "hola"
@@ -55,7 +52,7 @@ def newPlace(place: Place, db: Session = Depends(get_db)):
     place_model.name = place.name
     place_model.address = place.address
     place_model.foodType = place.foodType
-    place_model.rating = place.rating
+    place_model.rating = int(place.rating)
     place_model.visited = place.visited
     db.add(place_model)
     db.commit()
@@ -72,7 +69,7 @@ def updatePlace(placeID: int, newPlaceData: Place, db: Session = Depends(get_db)
     place_model.name = newPlaceData.name
     place_model.address = newPlaceData.address
     place_model.foodType = newPlaceData.foodType
-    place_model.rating = newPlaceData.rating
+    place_model.rating = int(newPlaceData.rating)
     place_model.visited = newPlaceData.visited
     db.add(place_model)
     db.commit()
@@ -91,3 +88,7 @@ def deletePlace(placeID: int, db: Session = Depends(get_db)):
     db.commit()
 
     return "Succesfully deleted"
+
+@app.get("/5StarPlaces")
+async def read_api(db: Session = Depends(get_db)):
+    return db.query(models.Places).filter(models.Places.rating == 5).all()
